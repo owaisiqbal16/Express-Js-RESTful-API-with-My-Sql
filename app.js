@@ -15,13 +15,17 @@ dbConn.connect();
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
-    extended: true
+    extended: false
 }));
 
 
 //INDEX ROUTE
 app.get("/", function (req, res) {
     return res.send({ error: true, message: "Hello world" })
+});
+
+app.get("/user/new", function (req, res) {
+    res.render("form.ejs");
 });
 
 //FETCH ALL USERS
@@ -50,13 +54,20 @@ app.get("/user/:id", function (req, res) {
 
 //ADD NEW USER
 app.post("/user", function (req, res) {
-    let user = req.body.user;
+    var user = {
+        name: req.body.name,
+        email: req.body.email
+    };
+    const {name,email}=req.body
+    console.log(user)
     if (!user) {
         return res.status(400).send({ error: true, message: 'please provide user' });
     }
-    dbConn.query('INSERT INTO users SET ?', { user: user }, function (error, results, fields) {
-        if (error) throw err;
-        return res.send({ error: false, data: results, message: "Added new user successfully" });
+    dbConn.query(`INSERT INTO users (name,email) values('${name}','${email}')`, function (error, results, fields) {
+        if (error) { throw err }
+        else {
+            return res.send({ error: false, data: results, message: "Added new user successfully" });
+        }
     })
 })
 
