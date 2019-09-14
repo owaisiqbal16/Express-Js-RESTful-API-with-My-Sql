@@ -73,12 +73,15 @@ app.post("/user", function (req, res) {
 
 //Update User
 app.put('/user', function (req, res) {
-    let user_id = req.body.user_id;
-    let user = req.body.user;
-    if (!user_id || !user) {
+    var user = {
+        name: req.body.name,
+        email: req.body.email,
+        id : req.body.id
+    };
+    if (!user) {
         return res.status(400).send({ error: user, message: 'Please provide user and user_id' });
     }
-    dbConn.query("UPDATE users SET user = ? WHERE id = ?", [user, user_id], function (error, results, fields) {
+    dbConn.query("UPDATE users SET name = ? WHERE id = ?" , [user.name,user.id] , function (error, results, fields) {
         if (error) throw error;
         return res.send({ error: false, data: results, message: 'user has been updated successfully.' });
     });
@@ -86,13 +89,13 @@ app.put('/user', function (req, res) {
 
 //Delete User
 app.delete('/user', function (req, res) {
-    let user_id = req.body.user_id;
-    if (!user_id) {
+    let id = req.body.id;
+    if (!id) {
         return res.status(400).send({ error: true, message: 'Please provide user_id' });
     }
-    dbConn.query('DELETE FROM users WHERE id = ?', [user_id], function (error, results, fields) {
+    dbConn.query('DELETE FROM users WHERE id = ?', [id], function (error, results, fields) {
         if (error) throw error;
-        return res.send({ error: false, data: results, message: 'User has been updated successfully.' });
+        return res.send({ error: false, data: results, message: 'User has been deleted successfully.' });
     });
 });
 
